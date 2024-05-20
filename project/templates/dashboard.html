@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Sidebar</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        /* Base styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+        }
+        
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 250px;
+            background-color:#cac8c8;
+            transition: all 0.3s;
+            z-index: 1000; /* Ensure the sidebar is above other content */
+        }
+
+        header {
+            color: #fff;
+            font-size: 28px; 
+            text-align: center;
+            font-family: "Material Icons";
+            line-height: 80px; /* Reduced line-height */
+            padding-top: 20px;
+        }
+
+        #sidebar .list-group-item {
+            line-height: 50px;
+            background-color: transparent;
+            border: none;
+            color: #000;
+            border-radius: 0;
+            padding: 10px;
+            transition: background-color 0.3s;
+            text-decoration: none; 
+            padding-left: 40px;
+            box-sizing: border-box;
+            border-top: 2px solid rgba(255,255,255,.1);
+            border-bottom: 1px solid #fff;
+            transition: .4s;
+        }
+
+        #sidebar .list-group-item:hover {
+            padding-left: 50px;
+        }
+
+        #sidebar img {
+            display: block;
+            margin: 0 auto;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        #content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: margin-left 0.3s; /* Smooth transition for margin change */
+        }
+        
+        h1 {
+            text-align: center;
+        }
+        
+        .card {
+            margin-top: 20px;
+            cursor: move;
+            border-radius: 20px;
+            position: relative; /* Ensure the card's position can be adjusted */
+        }
+        
+        .card.dragging {
+            transform: scale(1.1); /* Increase scale when dragging for a full view */
+            transition: transform 0.3s ease-in-out; /* Add transition effect */
+            z-index: 100; /* Ensure the dragged card appears on top of others */
+            cursor: grabbing; /* Change cursor to indicate dragging */
+        }
+
+        #trash-bin {
+            font-size: 24px;
+            color: red;
+            display: none; /* Initially hide the trash bin */
+            position: absolute;
+            left: 50%; /* Center horizontally */
+            bottom: 0; /* Place below the cards */
+            transform: translateX(-50%); /* Adjust for centering */
+            z-index: 1000;
+        }
+
+        #trash-bin.show {
+            display: block; /* Show the trash bin */
+        }
+
+        @media (max-width: 768px) {
+            #sidebar {
+                width: 0;
+                overflow-x: hidden;
+            }
+
+            #content {
+                margin-left: 0;
+            }
+
+            #sidebar.active {
+                width: 250px;
+            }
+
+            #sidebarCollapse {
+                display: block;
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                z-index: 1001;
+                background-color: rgb(71, 144, 71);
+                padding: 6px 12px; 
+                border-radius: 10px; 
+            }
+
+            .navbar-toggler-icon {
+                background-color: rgb(71, 144, 71);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <header class="header bg-success">
+            <div>
+                <img src="{% static 'images/dp2.avif' %}" alt="Profile Picture">
+            </div>
+            CRM
+        </header>
+        <div class="list-group">
+            <a href="{% url 'home' %}" class="list-group-item"><i class="fas fa-home"></i> Home</a>
+            <a href="{% url 'dash' %}" class="list-group-item"><i class="fas fa-cog"></i> Dashboard</a>
+            <a href="#" class="list-group-item"><i class="fas fa-briefcase"></i> Jobs</a>
+            <a href="#" class="list-group-item"><i class="fas fa-users"></i> Clients</a>
+            <a href="{% url 'dashboard' %}" class="list-group-item"><i class="fas fa-trash"></i> Archive</a>
+            <a href="#" class="list-group-item"><i class="fas fa-question-circle"></i> Help & Support</a>
+            <a role="button" class="btn btn-outline-success" id="clearSessionStorageBtn"><i class="fas fa-sign-out-alt"></i> Clear Session Storage</a>
+        </div>
+    </div>
+
+    <div id="content">
+        <nav class="navbar navbar-expand-lg navbar-dark ">
+            <div class="container">
+                <button class="navbar-toggler" type="button" id="sidebarCollapse" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle sidebar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </nav>
+        <div class="container">
+            <h1><u>Archive Folders</u></h1>
+        </div>
+        <div class="archive">
+            <div class="container" style="margin-top: 100px;">
+                <a hidden href="{% url 'dash' %}" id="cardsLink">cards</a>
+                <div id="savedCardContainer" class="row"></div>
+            </div>
+        </div>
+    </div>
+          
+    <script>
+        function handleCardsLinkClick(event) {
+            event.preventDefault();
+        }
+    
+        document.getElementById("cardsLink").addEventListener("click", handleCardsLinkClick);
+    
+        var savedHTMLArray = JSON.parse(sessionStorage.getItem("draggedHTMLArray"));
+        var savedCardContainer = document.getElementById("savedCardContainer");
+    
+        if (savedHTMLArray && savedHTMLArray.length > 0) {
+            savedHTMLArray.forEach(function(savedHTML) {
+                var tempContainer = document.createElement('div');
+                tempContainer.innerHTML = savedHTML;
+                var savedCard = tempContainer.firstChild;
+    
+                var cardContainer = document.createElement('div');
+                cardContainer.className = 'col-lg-6 col-md-4 col-sm-6 mb-4';
+    
+                var card = document.createElement('div');
+                card.className = 'card h-100'; 
+                card.innerHTML = savedCard.innerHTML;
+    
+                var cardBody = document.createElement('div');
+                cardBody.className = 'card-body d-flex flex-column'; 
+                cardBody.style.height = '100%'; 
+    
+                var undoButton = document.createElement('button');
+                undoButton.className = 'btn btn-success mt-auto'; 
+                undoButton.innerHTML = 'Remove';
+    
+                undoButton.addEventListener('click', function(event) {
+                    cardContainer.parentNode.removeChild(cardContainer);
+                    
+                    var index = savedHTMLArray.indexOf(savedHTML);
+                    if (index > -1) {
+                        savedHTMLArray.splice(index, 1);
+                        sessionStorage.setItem("draggedHTMLArray", JSON.stringify(savedHTMLArray));
+                    }
+                });
+    
+                cardBody.appendChild(undoButton);
+                card.appendChild(cardBody);
+                cardContainer.appendChild(card);
+                savedCardContainer.appendChild(cardContainer);
+            });
+        } 
+    
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+    
+        document.getElementById('sidebarCollapse').addEventListener('click', function() {
+            toggleSidebar();
+        });
+    </script>
+    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7Hfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>

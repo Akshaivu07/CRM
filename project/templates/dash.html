@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Sidebar</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        /* Your CSS styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+        }
+        
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 250px;
+            background-color:#cac8c8;
+            transition: all 0.3s;
+        }
+
+        header {
+            color: #fff;
+            font-size: 28px; 
+            text-align: center;
+            font-family: "Material Icons";
+            line-height: 80px; /* Reduced line-height */
+            padding-top: 20px;
+        }
+
+        #sidebar .list-group-item {
+            line-height: 50px;
+            background-color: transparent;
+            border: none;
+            color: #000;
+            border-radius: 0;
+            padding: 10px;
+            transition: background-color 0.3s;
+            text-decoration: none; 
+            padding-left: 40px;
+            box-sizing: border-box;
+            border-top: 2px solid rgba(255,255,255,.1);
+            border-bottom: 1px solid #fff;
+            transition: .4s;
+        }
+
+        #sidebar .list-group-item:hover {
+            padding-left: 50px;
+        }
+
+        #sidebar img {
+            display: block;
+            margin: 0 auto;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        #content {
+            margin-left: 250px;
+            padding: 20px;
+            margin-top: 50px;
+            position: relative; /* Ensure the content is positioned relative */
+        }
+        h1 {
+            text-align: center;
+        }
+        
+        #clients, #jobs {
+            border-radius: 30px;
+            margin-top: 40px;
+            box-shadow: 0 0 20px rgba(71, 144, 71, 0.5);
+        }
+
+        .card {
+            margin-top: 20px;
+            cursor: move;
+            border-radius: 20px;
+            position: relative; 
+        }
+        .card.dragging {
+            transform: scale(1.1); 
+            transition: transform 0.3s ease-in-out; 
+            z-index: 100; 
+            cursor: grabbing; 
+        }
+        .popup{
+            margin-left: 588px;
+            width: 100px;
+        }
+        .popup-content i {
+            font-size: 25px; 
+        }
+        
+
+        
+        @media (max-width: 768px) {
+            #sidebar {
+                width: 0;
+                overflow-x: hidden;
+                z-index: 999; 
+            }
+            .popup{
+                margin-left: 10px;
+                
+                
+            }
+            .popup-content i {
+                font-size: 15px; /* Increase the size of the trash bin icon */
+            }
+
+            #content {
+                margin-left: 0;
+            }
+
+            #sidebar.active {
+                width: 250px;
+            }
+
+            #sidebarCollapse {
+                display: block;
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                z-index: 1000;
+                
+                padding: 6px 12px; 
+                border-radius: 10px; 
+            }
+            #navbar-toggler-icon {
+                
+                margin-top: 20px;
+            }
+            section img{
+                margin-left: 0;
+            }
+            footer{
+                position: absolute;
+            }
+        }
+        footer{
+            background-color: lightgrey;
+        }
+
+        
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <header class="header bg-success">
+            <div>
+                <img src="{% static 'images/dp2.avif' %}" alt="Profile Picture">
+            </div>
+            CRM
+        </header>
+        <div class="list-group">
+            <a href="{% url 'home' %}" class="list-group-item"><i class="fas fa-home"></i> Home</a>
+            <a href="{% url 'dash' %}" class="list-group-item"><i class="fas fa-cog" ></i> Dashboard</a>
+            <a href="#" class="list-group-item"><i class="fas fa-briefcase"></i> Jobs</a>
+            <a href="#" class="list-group-item"><i class="fas fa-users"></i> Clients</a>
+            <a href="{% url 'dashboard' %}" class="list-group-item"><i class="fas fa-trash"></i> Archive</a>
+            <a href="#" class="list-group-item"><i class="fas fa-question-circle"></i> Help & Support</a>
+            <a role="button" class="btn btn-outline-success"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <div id="content">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <button class="navbar-toggler bg-success " type="button" id="sidebarCollapse" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle sidebar">
+                    <span class="navbar-toggler-icon bg-success"></span>
+                </button>
+            </div>
+        </nav>
+        <div class="container">
+            <h1 class="text-success"><u>Welcome to Dashboard</u></h1>
+        </div>
+
+        <section id="about" class="about section-padding" style="margin-top: 100px;" >
+            <div class="container">
+              <div class="row">
+                <div class="col-lg-4 col-md-12 col-12">
+                  <div class="about-image">
+                    <img src="" class="img-fluid">
+                  </div>
+                </div>
+                <div class="col-lg-8 col-md-12 col-12 ps-lg-5 mt-md-5" >
+                  <div class="about-text">
+                    <h2>Users in different industries</h2>
+                  <p>The CRM industry has seen staggering growth in recent years. And 2022 was no different. Last year we found out that overall 
+                    CRM usage increased from 56% to 74%. Broken down this statistic showed that 91% of businesses with over 11 employees now use
+                     CRM, compared to 50% of those with 10 employees or less.</p>
+                     <a href="#" class="btn btn-success">Learn More</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </section>
+
+          <section>
+            <div class="container" style="margin-top: 50px;" >
+                
+                    <img src="{% static 'images/crmi.jpg' %}" class="img-fluid mx-auto d-block">
+                </div>
+                
+
+            
+          </section>
+
+          <section id="about" class="about section-padding" style="margin-top: 100px;">
+            <div class="container bg-success" style="border-radius: 10px;">
+              <div class="row">
+                <div class="col-lg-8 col-md-12 col-12 ps-lg-5 mt-md-5">
+                  <div class="about-text">
+                    <h2>New Client & Active Jobs</h2>
+                    <p>In conclusion, customer reviews are an invaluable asset for businesses, providing insights into customer experiences,
+                       building trust, and driving growth. Encouraging and managing customer reviews can have a significant impact on a business's 
+                       reputation, online visibility, and customer loyalty.</p>
+                    
+                  </div>
+                </div>
+                <div class="col-lg-4 col-md-12 col-12">
+                  <div class="about-image">
+                    <img src="{% static 'images/review.webp' %}" class="img-fluid">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form" id="clients">
+                    <div class="card-body">
+                        <h1><i class="fas fa-users"></i> Clients</h1>
+                        <div class="card" id="client1" draggable="true" ondragstart="drag(event)" id="dragData1">
+                            <h4 style="text-align: center;">New Clients</h4>
+                            <p style="text-align: center;">Albert de Niro</p>
+                        </div>
+                        <div class="card" id="client2" draggable="true" ondragstart="drag(event)" id="dragData2">
+                            <h4 style="text-align: center;">New Clients</h4>
+                            <p style="text-align: center;">Jhon Williams</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form" id="jobs">
+                    <div class="card-body">
+                        <h1><i class="fas fa-briefcase"></i> Jobs</h1>
+                        <div class="card" id="job1" draggable="true" ondragstart="drag(event)" id="dragData3">
+                            <h4 style="text-align: center;">Active Jobs</h4>
+                            <p style="text-align: center;">Newly active Jobs</p>
+                        </div>
+                        <div class="card" id="job2" draggable="true" ondragstart="drag(event)" id="dragData4">
+                            <h4 style="text-align: center;">Active Jobs</h4>
+                            <p style="text-align: center;">Newly active Jobs</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="popup" id="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup()">&times;</span>
+                <i class="fas fa-trash"></i>
+            </div>
+        </div>
+         
+        
+    </div>
+    <footer  style="margin-top: 70px;">
+        <div class="container">
+            <p class="text-dark text-md-end">All Right Reserved @PERSONALWEB</p>
+        </div>
+    </footer>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        hidePopup();
+        
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+    
+        function drag(event) {
+            var cardElement = event.target.closest('.card');
+            event.dataTransfer.setData("text", cardElement.id);
+            showPopup();
+        }
+        
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+        
+        document.getElementById('popup').addEventListener('dragover', function (event) {
+            event.preventDefault();
+        });
+        
+        document.getElementById('popup').addEventListener('drop', function (event) {
+            event.preventDefault();
+            var fetchData = event.dataTransfer.getData("text");
+            var draggedElement = document.getElementById(fetchData);
+            
+            if (draggedElement) {
+                draggedElement.parentNode.removeChild(draggedElement);
+                
+                var draggedHTML = draggedElement.outerHTML;
+                var savedHTMLArray = JSON.parse(sessionStorage.getItem("draggedHTMLArray")) || [];
+                savedHTMLArray.push(draggedHTML);
+                sessionStorage.setItem("draggedHTMLArray", JSON.stringify(savedHTMLArray));
+            }
+            
+            document.getElementById('popup').style.display = 'none';
+        });
+        
+        document.querySelectorAll("[draggable=true]").forEach(function (element) {
+            element.addEventListener("dragend", function (event) {
+                hidePopup();
+            });
+        });
+        
+        var savedHTMLArray = JSON.parse(sessionStorage.getItem("draggedHTMLArray"));
+        
+        if (savedHTMLArray && savedHTMLArray.length > 0) {
+            savedHTMLArray.forEach(function (cardHTML) {
+                var card = document.createElement('div');
+                card.innerHTML = cardHTML;
+                var cardId = card.firstChild.id;
+                document.getElementById(cardId).remove();
+            });
+        }
+    
+        var touchStartX, touchStartY, touchEndX, touchEndY, draggedElement;
+    
+        function touchStart(event) {
+            touchStartX = event.touches[0].clientX;
+            touchStartY = event.touches[0].clientY;
+            showPopup();
+            draggedElement = event.target.closest('.card');
+        }
+        
+        function touchMove(event) {
+            event.preventDefault();
+        }
+        
+        function touchEnd(event) {
+            touchEndX = event.changedTouches[0].clientX;
+            touchEndY = event.changedTouches[0].clientY;
+            
+            if (Math.abs(touchEndX - touchStartX) < 10 && Math.abs(touchEndY - touchStartY) < 10) {
+                event.target.click();
+            } else if (draggedElement && isInsidePopup(touchEndX, touchEndY)) {
+                draggedElement.parentNode.removeChild(draggedElement);
+                var savedHTMLArray = JSON.parse(sessionStorage.getItem("draggedHTMLArray")) || [];
+                savedHTMLArray.push(draggedElement.outerHTML);
+                sessionStorage.setItem("draggedHTMLArray", JSON.stringify(savedHTMLArray));
+                draggedElement = null;
+                hidePopup();
+            } else {
+                hidePopup();
+            }
+        }
+        
+        function isInsidePopup(x, y) {
+            var popup = document.getElementById('popup');
+            var rect = popup.getBoundingClientRect();
+            return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+        }
+        
+        function showPopup() {
+            document.getElementById('popup').style.display = 'block';
+        }
+        
+        function hidePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+        
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+        
+        document.getElementById('sidebarCollapse').addEventListener('click', function() {
+            toggleSidebar();
+        });
+        
+        function renderCardsFromStorage() {
+            var savedHTMLArray = JSON.parse(sessionStorage.getItem("draggedHTMLArray")) || [];
+            savedHTMLArray.forEach(function (html) {
+                var tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                document.body.appendChild(tempDiv.firstChild);
+            });
+        }
+        
+        document.querySelectorAll(".card").forEach(function (element) {
+            element.addEventListener("touchstart", touchStart);
+            element.addEventListener("touchmove", touchMove);
+            element.addEventListener("touchend", touchEnd);
+        });
+    </script>
+</body>
+</html>
