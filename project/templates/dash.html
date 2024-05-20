@@ -15,6 +15,9 @@
             padding: 0;
             font-family: Arial, sans-serif;
             background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         
         #sidebar {
@@ -25,6 +28,9 @@
             width: 250px;
             background-color:#cac8c8;
             transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         header {
@@ -68,8 +74,7 @@
         #content {
             margin-left: 250px;
             padding: 20px;
-            margin-top: 50px;
-            position: relative; /* Ensure the content is positioned relative */
+            flex: 1;
         }
         h1 {
             text-align: center;
@@ -94,14 +99,12 @@
             cursor: grabbing; 
         }
         .popup{
-            margin-left: 588px;
+            margin-left: 582px;
             width: 100px;
         }
         .popup-content i {
-            font-size: 25px; 
+            font-size: 30px; 
         }
-        
-
         
         @media (max-width: 768px) {
             #sidebar {
@@ -111,11 +114,9 @@
             }
             .popup{
                 margin-left: 10px;
-                
-                
             }
             .popup-content i {
-                font-size: 15px; /* Increase the size of the trash bin icon */
+                font-size: 30px; /* Increase the size of the trash bin icon */
             }
 
             #content {
@@ -132,25 +133,28 @@
                 top: 10px;
                 left: 10px;
                 z-index: 1000;
-                
                 padding: 6px 12px; 
                 border-radius: 10px; 
             }
             #navbar-toggler-icon {
-                
                 margin-top: 20px;
             }
             section img{
                 margin-left: 0;
             }
-            footer{
-                position: absolute;
-            }
-        }
-        footer{
-            background-color: lightgrey;
         }
 
+        footer {
+            background-color: lightgrey;
+            padding: 10px 20px;
+            width: 100%;
+            flex-shrink: 0; /* Prevent footer from shrinking */
+        }
+
+        footer p {
+            margin: 0;
+            text-align: center; /* Center align text in footer */
+        }
         
     </style>
 </head>
@@ -171,6 +175,7 @@
             <a href="#" class="list-group-item"><i class="fas fa-question-circle"></i> Help & Support</a>
             <a role="button" class="btn btn-outline-success"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
+        
     </div>
 
     <div id="content">
@@ -182,24 +187,20 @@
             </div>
         </nav>
         <div class="container">
-            <h1 class="text-success"><u>Welcome to Dashboard</u></h1>
+            <h1 ><u>Welcome to Dashboard</u></h1>
         </div>
 
-        <section id="about" class="about section-padding" style="margin-top: 100px;" >
+        <section id="about" class="about section-padding" style="margin-top: 50px;" >
             <div class="container">
               <div class="row">
-                <div class="col-lg-4 col-md-12 col-12">
-                  <div class="about-image">
-                    <img src="" class="img-fluid">
-                  </div>
-                </div>
-                <div class="col-lg-8 col-md-12 col-12 ps-lg-5 mt-md-5" >
+                
+                <div class="" >
                   <div class="about-text">
-                    <h2>Users in different industries</h2>
-                  <p>The CRM industry has seen staggering growth in recent years. And 2022 was no different. Last year we found out that overall 
+                    <h2 style="text-align: center;"><span class="bg-success">Users in different industries</span></h2>
+                  <p style="text-align: center;">The CRM industry has seen staggering growth in recent years. And 2022 was no different. Last year we found out that overall 
                     CRM usage increased from 56% to 74%. Broken down this statistic showed that 91% of businesses with over 11 employees now use
                      CRM, compared to 50% of those with 10 employees or less.</p>
-                     <a href="#" class="btn btn-success">Learn More</a>
+                     
                   </div>
                 </div>
               </div>
@@ -207,13 +208,9 @@
         </section>
 
           <section>
-            <div class="container" style="margin-top: 50px;" >
-                
-                    <img src="{% static 'images/crmi.jpg' %}" class="img-fluid mx-auto d-block">
-                </div>
-                
-
-            
+            <div class="container" style="margin-top: 20px;" >
+                <img src="{% static 'images/crmi.jpg' %}" class="img-fluid mx-auto d-block">
+            </div>
           </section>
 
           <section id="about" class="about section-padding" style="margin-top: 100px;">
@@ -225,7 +222,6 @@
                     <p>In conclusion, customer reviews are an invaluable asset for businesses, providing insights into customer experiences,
                        building trust, and driving growth. Encouraging and managing customer reviews can have a significant impact on a business's 
                        reputation, online visibility, and customer loyalty.</p>
-                    
                   </div>
                 </div>
                 <div class="col-lg-4 col-md-12 col-12">
@@ -275,14 +271,13 @@
                 <i class="fas fa-trash"></i>
             </div>
         </div>
-         
-        
-    <!---</div>
-    <footer  style="margin-top: 70px;">
+    </div>
+    
+    <footer>
         <div class="container">
-            <p class="text-dark text-md-end">All Right Reserved @PERSONALWEB</p>
+            <p class="text-dark">All Right Reserved @PERSONALWEB</p>
         </div>
-    </footer> -->
+    </footer>
     
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
@@ -331,6 +326,7 @@
             });
         });
         
+        var savedHTMLArray
         var savedHTMLArray = JSON.parse(sessionStorage.getItem("draggedHTMLArray"));
         
         if (savedHTMLArray && savedHTMLArray.length > 0) {
@@ -413,3 +409,4 @@
     </script>
 </body>
 </html>
+
